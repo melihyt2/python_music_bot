@@ -182,4 +182,4 @@ Komutlar:
     await ctx.send(help_text)
 
 # Botun token'ı ile botu başlatın
-bot.run('MTA5MzYwMDM0NzUwMDU4MDk1NQ.G2VQQG.ABFtBVf1Sl_hY2eMCoGba87X6NIhBM6mPM8wrM')
+bot.run('tokeniniz')
