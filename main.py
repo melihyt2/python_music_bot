@@ -20,11 +20,10 @@ current_title = None
 queue = deque()
 start_time = None  # Botun başlatıldığı zamanı saklayacak değişken
 
-# Botun hazır olduğunu bildiren bir olay yazın
 @bot.event
 async def on_ready():
     global start_time
-    start_time = datetime.utcnow()  # Botun başlatıldığı zamanı kaydedin
+    start_time = datetime.utcnow()
     print(f'Bot hazır. Giriş yapıldı: {bot.user}')
     activity = discord.Activity(type=discord.ActivityType.listening, name="müzik")
     await bot.change_presence(activity=activity)
@@ -34,16 +33,14 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing commands: {e}")
 
-# Kullanıcı ses durumu değiştiğinde
 @bot.event
 async def on_voice_state_update(member, before, after):
     if member == bot.user and after.channel is None:
         await member.guild.voice_client.disconnect()
         global current_source, current_title
-        current_source = None  # Bot, ses kanalından ayrıldığında şarkıyı temizle
+        current_source = None
         current_title = None
 
-# Şarkıyı çalmak için bir fonksiyon
 async def play_song(ctx, query):
     global current_source, current_title
 
@@ -89,7 +86,6 @@ async def play_song(ctx, query):
     embed = discord.Embed(title="Şimdi Oynatılıyor", description=title, color=0x00ff00)
     await ctx.send(embed=embed)
 
-# YouTube'dan müzik çalma komutunu yazın
 @app_commands.command(name='oynat', description='Bir şarkıyı çalar.')
 async def play(interaction: discord.Interaction, query: str):
     await interaction.response.defer()
@@ -112,7 +108,6 @@ async def play(interaction: discord.Interaction, query: str):
         embed = discord.Embed(title="Şarkı Çalınıyor", description=query, color=0x00ff00)
         await interaction.followup.send(embed=embed)
 
-# Botun şarkıyı durdurması için bir komut yazın
 @app_commands.command(name='kapat', description='Şu anda çalan şarkıyı kapatır.')
 async def stop(interaction: discord.Interaction):
     global loop, current_source, current_title
@@ -127,7 +122,6 @@ async def stop(interaction: discord.Interaction):
         embed = discord.Embed(title="Hata", description="Şu anda hiçbir şarkı çalmıyor.", color=0xff0000)
         await interaction.response.send_message(embed=embed)
 
-# Şarkıyı döngüye almak için komut yazın
 @app_commands.command(name='döngü', description='Şarkıyı döngüye alır.')
 async def loop_(interaction: discord.Interaction):
     global loop
@@ -136,7 +130,6 @@ async def loop_(interaction: discord.Interaction):
     embed = discord.Embed(title="Döngü Durumu", description=f"Döngü şimdi {status}", color=0x00ff00)
     await interaction.response.send_message(embed=embed)
 
-# Şarkıyı duraklatmak için bir komut yazın
 @app_commands.command(name='duraklat', description='Şu anda çalan şarkıyı duraklatır.')
 async def pause(interaction: discord.Interaction):
     if interaction.guild.voice_client.is_playing():
@@ -158,7 +151,6 @@ async def resume(interaction: discord.Interaction):
         embed = discord.Embed(title="Hata", description="Şu anda hiçbir şarkı duraklatılmış değil.", color=0xff0000)
         await interaction.response.send_message(embed=embed)
 
-# Şu anda çalan şarkıyı göstermek için bir komut yazın
 @app_commands.command(name='çalan-şarkı', description='Şu anda çalan şarkıyı gösterir.')
 async def nowplaying(interaction: discord.Interaction):
     if current_title:
@@ -168,7 +160,6 @@ async def nowplaying(interaction: discord.Interaction):
         embed = discord.Embed(title="Hata", description="Şu anda hiçbir şarkı çalmıyor.", color=0xff0000)
         await interaction.response.send_message(embed=embed)
 
-# Ses seviyesini ayarlamak için bir komut yazın
 @app_commands.command(name='ses', description='Ses seviyesini ayarlar.')
 async def volume(interaction: discord.Interaction, volume: int):
     if interaction.guild.voice_client.is_playing() or interaction.guild.voice_client.is_paused():
@@ -183,7 +174,6 @@ async def volume(interaction: discord.Interaction, volume: int):
         embed = discord.Embed(title="Hata", description="Şu anda hiçbir şarkı çalmıyor.", color=0xff0000)
         await interaction.response.send_message(embed=embed)
 
-# Botun ne kadar süredir aktif olduğunu göstermek için bir komut yazın
 @app_commands.command(name='uptime', description='Botun ne kadar süredir aktif olduğunu gösterir.')
 async def uptime(interaction: discord.Interaction):
     if start_time:
@@ -197,7 +187,6 @@ async def uptime(interaction: discord.Interaction):
         embed = discord.Embed(title="Hata", description="Başlatılma zamanı bulunamadı.", color=0xff0000)
         await interaction.response.send_message(embed=embed)
 
-# Ping değerini göstermek için bir komut yazın
 @app_commands.command(name='ping', description='Botun ping değerini gösterir.')
 async def ping(interaction: discord.Interaction):
     latency_ms = bot.latency * 1000
